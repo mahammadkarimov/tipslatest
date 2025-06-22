@@ -51,7 +51,7 @@ export const getWaiterTips = async (): Promise<any> => {
 
 
 
-export const adminGetTips = async (): Promise<ApiResponse<any>> => {
+export const adminGetTips = async (username?: string): Promise<ApiResponse<any>> => {
     try {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
@@ -63,6 +63,10 @@ export const adminGetTips = async (): Promise<ApiResponse<any>> => {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
+            body: JSON.stringify({
+                "username": username || ""
+            }),
+
         });
 
         if (!response.ok) {
@@ -79,7 +83,7 @@ export const adminGetTips = async (): Promise<ApiResponse<any>> => {
 
 
 
-export const adminGetWaiters = async (): Promise<ApiResponse<any>> => {
+export const adminGetWaiters = async (username?: string): Promise<ApiResponse<any>> => {
     try {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
@@ -91,6 +95,10 @@ export const adminGetWaiters = async (): Promise<ApiResponse<any>> => {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
+            body: JSON.stringify({
+                "username": username || ""
+            }),
+
         });
 
         if (!response.ok) {
@@ -106,7 +114,7 @@ export const adminGetWaiters = async (): Promise<ApiResponse<any>> => {
 }
 
 
-export const adminEditWaiter = async (data: any): Promise<ApiResponse<any>> => {
+export const adminEditWaiter = async (data: any,username?: string): Promise<ApiResponse<any>> => {
     try {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
@@ -119,7 +127,11 @@ export const adminEditWaiter = async (data: any): Promise<ApiResponse<any>> => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`,
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(data+ {
+
+                "username": username || ""
+            }
+            ),
         });
 
         if (!response.ok) {
@@ -135,7 +147,7 @@ export const adminEditWaiter = async (data: any): Promise<ApiResponse<any>> => {
 }
 
 
-export const adminCreateWaiter = async (data: any): Promise<ApiResponse<any>> => {
+export const adminCreateWaiter = async (data: any,username?: string): Promise<ApiResponse<any>> => {
     try {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
@@ -148,7 +160,9 @@ export const adminCreateWaiter = async (data: any): Promise<ApiResponse<any>> =>
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`,
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(data+ {
+                "username": username || ""
+            }),
         });
 
         if (!response.ok) {
@@ -163,7 +177,7 @@ export const adminCreateWaiter = async (data: any): Promise<ApiResponse<any>> =>
     }
 }
 
-export const adminResetWaiterBalances = async (): Promise<ApiResponse<any>> => {
+export const adminResetWaiterBalances = async (username?: string): Promise<ApiResponse<any>> => {
     try {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
@@ -176,6 +190,10 @@ export const adminResetWaiterBalances = async (): Promise<ApiResponse<any>> => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`,
             },
+            body: JSON.stringify({
+                "username": username || ""
+            }),
+
         });
 
         if (!response.ok) {
@@ -191,7 +209,7 @@ export const adminResetWaiterBalances = async (): Promise<ApiResponse<any>> => {
 }
 
 
-export const adminResetWaiterBalance = async (workerId:number): Promise<ApiResponse<any>> => {
+export const adminResetWaiterBalance = async (workerId:number,username?: string): Promise<ApiResponse<any>> => {
     try {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) {
@@ -204,6 +222,10 @@ export const adminResetWaiterBalance = async (workerId:number): Promise<ApiRespo
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`,
             },
+            body: JSON.stringify({
+                "username": username || ""
+            }),
+
         });
 
         if (!response.ok) {
@@ -363,6 +385,351 @@ export const WalletPaymentStatus = async (transactionId: string,status:string): 
         return { data, success: true };
     } catch (error) {
         console.error('Error checking wallet payment status:', error);
+        throw error;
+    }
+}
+
+
+export const getBankCards = async (): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/bank-cards/`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return { data, success: true };
+    } catch (error) {
+        console.error('Error fetching bank cards:', error);
+        throw error;
+    }
+}
+
+
+
+export const registerCard = async (waiter:string): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/card-register/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+               
+                "language": "az",
+                "description": `${waiter} üçün qeydiyyat`,
+              }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error registering card:', error);
+        throw error;
+    }
+}
+
+
+
+export const withdrawMoney = async (data: any): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/withdrawal/create/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error withdrawing money:', error);
+        throw error;
+    }
+}
+
+
+
+export const superAdminGetTips = async (): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/tips/`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return { data, success: true };
+    } catch (error) {
+        console.error('Error fetching super admin tips:', error);
+        throw error;
+    }
+}
+
+export const superAdminGetWaiters = async (): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/waiters/`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return { data, success: true };
+    } catch (error) {
+        console.error('Error fetching super admin waiters:', error);
+        throw error;
+    }
+}
+
+export const superAdminEditWaiter = async (data: any): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/waiter-edit/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error editing super admin waiter:', error);
+        throw error;
+    }
+}
+
+export const superAdminCreateWaiter = async (data: any): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/waiter-create/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error creating super admin waiter:', error);
+        throw error;
+    }
+}
+
+
+export const superAdminResetWaiterBalances = async (): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/reset-waiter-balances/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error resetting super admin waiter balances:', error);
+        throw error;
+    }
+}
+
+
+export const superAdminResetWaiterBalance = async (workerId:number): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/reset-waiter-balances/${workerId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error resetting super admin waiter balances:', error);
+        throw error;
+    }
+}
+
+
+
+
+export const superAdminExportTips = async (restaurantId?:string): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/export-excel-tips/${restaurantId}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error exporting super admin tips:', error);
+        throw error;
+    }
+}
+
+
+export const superAdminExportWaiters = async (restaurantId?:string): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/export-excel-waiters/${restaurantId}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error exporting super admin waiters:', error);
+        throw error;
+    }
+}
+
+
+
+export const superAdminRestaurants = async (): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/restaurants/`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return { data, success: true };
+    } catch (error) {
+        console.error('Error fetching super admin restaurants:', error);
         throw error;
     }
 }

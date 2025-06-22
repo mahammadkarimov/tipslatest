@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { adminEditWaiter } from '@/services/api/user';
+import { superAdminEditWaiter } from '@/services/api/user';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   X, 
@@ -46,12 +46,13 @@ export function EditWorkerModal({ isOpen, onClose, worker, onSave ,t}: EditWorke
       setFormData({
         id: worker.id,
         name: worker.name,
-        email: worker.email,
+        waiter_id: worker.waiter_id,
         phone: worker.phone,
         role: worker.role,
         image: worker.image,
         restaurantId: worker.restaurantId,
         isActive: worker.isActive,
+
        
       });
     }
@@ -64,11 +65,7 @@ export function EditWorkerModal({ isOpen, onClose, worker, onSave ,t}: EditWorke
       newErrors.name = 'Name is required';
     }
 
-    if (!formData.email?.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
+   
 
     if (!formData.phone?.trim()) {
       newErrors.phone = 'Phone number is required';
@@ -89,7 +86,12 @@ export function EditWorkerModal({ isOpen, onClose, worker, onSave ,t}: EditWorke
     
     try {
       // Simulate API call
-      const response = await adminEditWaiter(formData as any);
+      if(formData.password && formData.password !== formData.passwordAgain) {
+        setErrors(prev => ({ ...prev, passwordAgain: 'Passwords do not match' }));
+        toast.error('Passwords do not match');
+        return;
+      }
+      const response = await superAdminEditWaiter(formData as any);
       if (!response.success) {
         toast.error(response.error || 'Failed to update worker');
         return;
@@ -272,52 +274,51 @@ export function EditWorkerModal({ isOpen, onClose, worker, onSave ,t}: EditWorke
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Email Address *
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email || ''}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`pl-10 ${errors.email ? 'border-red-300 focus:border-red-500' : ''}`}
-                      placeholder={t("Enter email address")}
-                    />
-                  </div>
-                  {errors.email && (
-                    <div className="flex items-center space-x-1 text-red-600 text-xs">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{errors.email}</span>
-                    </div>
-                  )}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">
+                  {t("Password")} 
+                </Label>
+                <div className="relative">
+               
+                  <Input
+                    id="password"
+                    type="password"
+                    value={formData.password || ''}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    className={`pl-10 ${errors.password ? 'border-red-300 focus:border-red-500' : ''}`}
+                    placeholder={t("Enter password")}
+                  />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-medium">
-                    {t("Phone Number")} *
-                  </Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                      id="phone"
-                      value={formData.phone || ''}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className={`pl-10 ${errors.phone ? 'border-red-300 focus:border-red-500' : ''}`}
-                      placeholder={t("Enter phone number")}
-                    />
+                {errors.password && (
+                  <div className="flex items-center space-x-1 text-red-600 text-xs">
+                    <AlertCircle className="w-3 h-3" />
+                    <span>{errors.password}</span>
                   </div>
-                  {errors.phone && (
-                    <div className="flex items-center space-x-1 text-red-600 text-xs">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{errors.phone}</span>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="passwordAgain" className="text-sm font-medium">
+                  {t("Password Again")} 
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="passwordAgain"
+                    type="password"
+                    value={formData.passwordAgain || ''}
+                    onChange={(e) => handleInputChange('passwordAgain', e.target.value)}
+                    className={`pl-10 ${errors.passwordAgain ? 'border-red-300 focus:border-red-500' : ''}`}
+                    placeholder={t("Enter password again")}
+                  />
+                </div>
+                {errors.passwordAgain && (
+                  <div className="flex items-center space-x-1 text-red-600 text-xs">
+                    <AlertCircle className="w-3 h-3" />
+                    <span>{errors.passwordAgain}</span>
+                  </div>
+                )}
+              </div>
+
+            
             </div>
 
             {/* Status */}
@@ -383,7 +384,7 @@ export function EditWorkerModal({ isOpen, onClose, worker, onSave ,t}: EditWorke
               {isLoading ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>{t("Saving...")}</span>
+                  <span>{t("Saving")}...</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">

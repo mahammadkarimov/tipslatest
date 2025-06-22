@@ -141,7 +141,7 @@ export function TipsHistoryModal({ isOpen, onClose, tips, workerName, workerPhot
                 <DollarSign className="w-5 h-5 text-green-600" />
                 <div>
                   <p className="text-sm text-gray-600">{t("Total net")}</p>
-                  <p className="text-xl font-bold text-green-700">${parseFloat(totalnet).toFixed(2)}</p>
+                  <p className="text-xl font-bold text-green-700">₼{parseFloat(totalnet).toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
@@ -153,7 +153,7 @@ export function TipsHistoryModal({ isOpen, onClose, tips, workerName, workerPhot
                 <TrendingUp className="w-5 h-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-600">{t("Average Tip")}</p>
-                  <p className="text-xl font-bold text-blue-700">${averagenet.toFixed(2)}</p>
+                  <p className="text-xl font-bold text-blue-700">₼{averagenet.toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
@@ -212,7 +212,7 @@ export function TipsHistoryModal({ isOpen, onClose, tips, workerName, workerPhot
                           <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                             <span className="text-2xl font-bold text-gray-900">
-                              ${parseFloat(tip.net).toFixed(2)}
+                            ₼{parseFloat(tip.net).toFixed(2)}
                             </span>
                           </div>
                           

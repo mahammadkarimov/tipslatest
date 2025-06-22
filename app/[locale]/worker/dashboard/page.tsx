@@ -9,7 +9,9 @@ import { StatsCard } from '@/components/StatsCard';
 import { QRDisplay } from '@/components/QRDisplay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {LoadingScreen} from '@/components/LoadingScreen';
-import   {getWaiterData , getWaiterTips} from '@/services/api/user';
+import   {getWaiterData , getWaiterTips , getBankCards} from '@/services/api/user';
+import MyCards from '@/components/MyCards';
+import WithdrawModal from '@/components/WithdrawMoney';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
@@ -44,6 +46,7 @@ export default function WorkerDashboard() {
   const t = useTranslations('Worker');
   const router = useRouter();
   const [userData,setUserData] = useState<UserData | null>(null);
+  const [cards, setCards] = useState<any[]>([]);
   const [stats, setStats] = useState<{
     daily: number;
     weekly: number;
@@ -72,6 +75,26 @@ export default function WorkerDashboard() {
       toast.error('Please login to continue');
     }
   }, []);
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await getBankCards();
+        if (response.success) {
+          setCards(response.data);
+        } else {
+          console.error('Failed to fetch cards:', response.error);
+        }
+      }
+      catch (error) {
+        console.error('Error fetching cards:', error);
+        toast.error('Failed to fetch cards. Please try again later.');
+      }
+    };
+    fetchCards();
+  }, []);
+
+        
 
   useEffect(() => {
     const fetchWaiterData = async () => {
@@ -175,30 +198,38 @@ export default function WorkerDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+            title="Balance"
+            value={`₼${waiterData?.balance?.toFixed(2) || '0.00'}`}
+          
+            icon={CreditCard}
+            
+            className="border-2 border-blue-100 bg-blue-50/50"
+          />
           <StatsCard
             title="Today's Tips"
-            value={`$${stats?.daily?.toFixed(2) || '0.00'}`}
+            value={`₼${stats?.daily?.toFixed(2) || '0.00'}`}
             icon={DollarSign}
            
             className="border-2 border-red-100 bg-red-50/50"
           />
           <StatsCard
             title="This Week"
-            value={`$${stats?.weekly?.toFixed(2) || '0.00'}`}
+            value={`₼${stats?.weekly?.toFixed(2) || '0.00'}`}
             icon={TrendingUp}
             
             className="border-2 border-blue-100 bg-blue-50/50"
           />
           <StatsCard
             title="This Month"
-             value={`$${stats?.monthly?.toFixed(2) || '0.00'}`}
+             value={`₼${stats?.monthly?.toFixed(2) || '0.00'}`}
             icon={Calendar}
             
             className="border-2 border-purple-100 bg-purple-50/50"
           />
           <StatsCard
             title="Average Tip"
-            value={`$${stats?.averageTip?.toFixed(2) || '0.00'}`}
+            value={`₼${stats?.averageTip?.toFixed(2) || '0.00'}`}
             icon={CreditCard}
             change={`${stats?.tipCount || 0} tips total`}
             className="border-2 border-orange-100 bg-orange-50/50"
@@ -224,7 +255,7 @@ export default function WorkerDashboard() {
                           <div className="flex items-center space-x-3">
                             <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
                             <span className="font-semibold text-gray-900">
-                              ${parseFloat(tip.net).toFixed(2)}
+                            ₼{parseFloat(tip.net).toFixed(2)}
                             </span>
                             
                             <span className="text-sm text-gray-600">
@@ -269,7 +300,8 @@ export default function WorkerDashboard() {
                   <Eye className="w-4 h-4 mr-2" />
                   {t("View All Tips")}
                 </Button>
-             
+               {/* <MyCards />
+               <WithdrawModal cards={cards} balance={waiterData?.balance || 0}/>*/}
                 
               </CardContent>
             </Card>

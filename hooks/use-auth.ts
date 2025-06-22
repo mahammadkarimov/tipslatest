@@ -28,10 +28,14 @@ export function useAuth() {
         setError('You are not authorized to access this portal');
         return false;
       }
-      if(app === 'admin' && response.data.user_type !== 'tipsadmin') {
+      if(app === 'admin' && response.data.user_type !== 'tipsadmin' && response.data.user_type !== 'superadmin') {
             setError('You are not authorized to access this portal');
             return false;
         }
+        if(app === 'network' && response.data.user_type !== 'superadmin' ) {
+          setError('You are not authorized to access this portal');
+          return false;
+      }
       router.replace(`/${app}/dashboard`);
       return true;
     } catch (err) {

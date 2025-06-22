@@ -89,7 +89,7 @@ export default function TipPage() {
   };
 
   const handlePayment = async () => {
-      setIsProcessing(true);
+     
       const payment_data = {
         "currency": 1,
         "language": "az",
@@ -104,8 +104,9 @@ export default function TipPage() {
         
         const response = await WalletPayment(payment_data);
         if (response.success) {
-          setPaymentLink(response.data.widget_url);
+         
           setTransactionId(response.data.widget_url);
+          window.open(response.data.widget_url, '_blank');
         }
         // Simulate wallet payment processing
         window.addEventListener('message', async (event) => {
@@ -118,11 +119,12 @@ export default function TipPage() {
             
             setIsProcessing(false);
             setShowIframe(false);
-            toast.error(t('Payment failed. Please try again.'));
+            toast.error(t("Payment failed. Please try again."));
           }
         });
-        setShowIframe(true);
+        
       } else if (paymentMethod === 'card') {
+        setIsProcessing(true);
         // Simulate card payment processing
         setTimeout(() => {
           setIsProcessing(true);
@@ -201,7 +203,7 @@ export default function TipPage() {
               ))}
             </div>
             <Button 
-              onClick={() => window.location.href = `/restaurant/${worker.restaurant}`}
+              onClick={() => window.location.href = `/restaurant/${worker.restaurant_username}`}
               variant="outline"
               className="w-full"
             >
@@ -319,7 +321,7 @@ export default function TipPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">{t('Custom Amount')}</label>
               <div className="relative">
-               
+                <p className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400">₼</p>
                 <Input
                   type="number"
                   placeholder="Minimum ₼1"
@@ -388,7 +390,7 @@ export default function TipPage() {
           <CardContent className="p-6">
             <div className="flex justify-between items-center text-lg font-semibold">
               <span className="text-gray-700">{t('Tip Amount')}:</span>
-              <span className="text-red-600">${getCurrentTipAmount().toFixed(2)}</span>
+              <span className="text-red-600">₼{getCurrentTipAmount().toFixed(2)}</span>
             </div>
           </CardContent>
         </Card>
@@ -396,14 +398,14 @@ export default function TipPage() {
         {/* Pay Button */}
         <Button
           onClick={handlePayment}
-          disabled={getCurrentTipAmount() <= 0.99 || isProcessing || selectedRating === 0}
+          disabled={isProcessing  || getCurrentTipAmount() < 1 || selectedRating === 0}
 
           className="w-full h-14 text-lg bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-900 disabled:opacity-50"
         >
           {isProcessing ? (
             <div className="flex items-center space-x-2">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span>{t("Processing...")}</span>
+              <span>{t("Processing")}...</span>
             </div>
           ) : (
             <div className="flex items-center space-x-2">

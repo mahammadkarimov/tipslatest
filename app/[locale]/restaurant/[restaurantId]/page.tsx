@@ -113,12 +113,15 @@ export default function RestaurantPage() {
         {/* Workers Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {workers.map((worker) => (
-            <WorkerCard
+            worker.isActive && (
+              <WorkerCard
               key={worker.id}
               worker={worker}
               onSelect={() => handleWorkerSelect(worker.tip_slug)}
               t={t}
             />
+            )
+            
           ))}
         </div>
 

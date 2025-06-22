@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { adminCreateWaiter } from '@/services/api/user';
+import { superAdminCreateWaiter } from '@/services/api/user';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   User, 
@@ -30,17 +30,17 @@ interface CreateWorkerModalProps {
   onClose: () => void;
   onSave: (newWorker: Worker) => void;
     t: any; // Translation function
+  restaurantId: string; // Added restaurantId prop
   
 }
 
-export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerModalProps) {
+export function CreateWorkerModal({ isOpen, onClose, onSave, t, restaurantId }: CreateWorkerModalProps) {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     role: '',
-    password: '', // Added password property
-    photo: '/api/placeholder/150/150', // Default placeholder image
+    photo: '', // Default placeholder image
+    password: '', // Added password property // Default placeholder image
     isActive: true,
   });
   
@@ -57,11 +57,6 @@ export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerMo
       newErrors.name = 'Name is required';
     }
 
-    if (!formData.email?.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
 
     if (!formData.phone?.trim()) {
       newErrors.phone = 'Phone number is required';
@@ -85,15 +80,32 @@ export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerMo
     
     try {
       // Simulate API call
-      const response = await adminCreateWaiter({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-        role: formData.role,
-        image: formData.photo,
-        isActive: formData.isActive,
-      });
+      
+        const data: {
+          name: string;
+          phone: string;
+          password: string;
+          role: string;
+          isActive: boolean;
+          restaurant: string;
+          image: string;
+        } = {
+          name: formData.name,
+          phone: formData.phone,
+          password: formData.password,
+          role: formData.role,
+         
+          isActive: formData.isActive,
+          restaurant: restaurantId, // Include restaurantId in the data
+          image: formData.photo || '', // Include photo if provided or default to an empty string
+        };
+        if (formData.photo) {
+          data.image = formData.photo; // Include photo if provided
+        } else {
+          data.image = ''; // Default placeholder image
+        }
+      
+      const response = await superAdminCreateWaiter(data);
         if (!response.success) {
             throw new Error(response.error || 'Failed to create worker');
         }
@@ -117,11 +129,10 @@ export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerMo
   const resetForm = () => {
     setFormData({
       name: '',
-      email: '',
       phone: '',
       role: '',
       password: '',
-      photo: '/api/placeholder/150/150',
+      photo: '',
       isActive: true,
     });
     setErrors({});
@@ -276,31 +287,8 @@ export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerMo
                   )}
                 </div>
               </div>
-
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Email Address *
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`pl-10 ${errors.email ? 'border-red-300 focus:border-red-500' : ''}`}
-                      placeholder={t("Enter email address")}
-                    />
-                  </div>
-                  {errors.email && (
-                    <div className="flex items-center space-x-1 text-red-600 text-xs">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{errors.email}</span>
-                    </div>
-                  )}
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="text-sm font-medium">
                     {t("Phone Number")} *
@@ -309,6 +297,7 @@ export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerMo
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
                       id="phone"
+                      type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       className={`pl-10 ${errors.phone ? 'border-red-300 focus:border-red-500' : ''}`}
@@ -322,7 +311,8 @@ export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerMo
                     </div>
                   )}
                 </div>
-              </div>
+                </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-sm font-medium">
@@ -418,7 +408,7 @@ export function CreateWorkerModal({ isOpen, onClose, onSave, t }: CreateWorkerMo
               {isLoading ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>{t("Creating...")}</span>
+                  <span>{t("Creating")}...</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">

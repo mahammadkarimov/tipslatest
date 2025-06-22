@@ -1,11 +1,12 @@
 // API configuration
-export const API_BASE_URL = 'https://api.innomatch.xyz/tips';
+export const API_BASE_URL = 'http://127.0.0.1:8000/tips';
 
 export const API_ENDPOINTS = {
   TIPS: `${API_BASE_URL}/`,
 } as const;
 
 export type ApiResponse<T> = {
+ 
   data?: T;
   error?: string;
   success: boolean;

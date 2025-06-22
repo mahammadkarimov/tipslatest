@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { CreditCard, Home, Settings, Users, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import LanguageChanger from './LanguageChanger';
+import Logo from '../public/logo.svg';
+import Image from 'next/image';
 
 import { cn } from '@/lib/utils';
 
@@ -23,8 +25,10 @@ export function Navbar({ userType , t }: NavbarProps) {
       <nav className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/worker/dashboard" className="flex items-center space-x-2">
-            <CreditCard className="w-6 h-6 text-red-600" />
-            <span className="font-bold text-xl text-gray-900">Tips BYQR</span>
+          <div className="flex items-center space-x-2">
+           <Image src={Logo} alt="Admin Image" width={40} height={40} />
+           <span className="font-bold text-xl text-gray-900">Tips BYQR</span>
+           </div>
           </Link>
           
           <div className="flex items-center space-x-4">
@@ -56,10 +60,10 @@ export function Navbar({ userType , t }: NavbarProps) {
     return (
       <nav className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/admin/dashboard" className="flex items-center space-x-2">
-            <CreditCard className="w-6 h-6 text-red-600" />
-            <span className="font-bold text-xl text-gray-900">Tips BYQR</span>
-          </Link>
+           <div className="flex items-center space-x-2">
+           <Image src={Logo} alt="Admin Image" width={40} height={40} />
+           <span className="font-bold text-xl text-gray-900">Tips BYQR</span>
+           </div>
           
           <div className="flex items-center space-x-4">
           
@@ -79,12 +83,12 @@ export function Navbar({ userType , t }: NavbarProps) {
   // Customer/default navbar
   return (
     <nav className="bg-white border-b border-gray-200 px-4 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-center">
-        <div className="flex items-center space-x-2">
-          <CreditCard className="w-6 h-6 text-red-600" />
-          <span className="font-bold text-xl text-gray-900">Tips BYQR</span>
-          
-        </div>
+      <div className="max-w-7xl mx-auto flex items-center space-x-2 justify-between">
+      <div className="flex items-center space-x-2">
+           <Image src={Logo} alt="Admin Image" width={40} height={40} />
+           <span className="font-bold text-xl text-gray-900">Tips BYQR</span>
+           </div>
+           <LanguageChanger />
       
         
       </div>

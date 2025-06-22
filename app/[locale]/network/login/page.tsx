@@ -38,7 +38,7 @@ export default function AdminLogin() {
       return;
     }
     // Redirect to admin dashboard on successful login
-    router.push('/admin/dashboard');
+    router.push('/network/dashboard');
     
     // In a real app, validate credentials here
     

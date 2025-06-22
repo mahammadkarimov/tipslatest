@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { CreateWorkerModal } from '@/components/CreateWorkerModal';
 import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 import { 
 
   DollarSign, 
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [workers, setWorkers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const username = usePathname().split('/')[3] ; // Get the username from the URL path
   const [editingWorker, setEditingWorker] = useState<any | null>(null);
   const [isCreatingWorker, setIsCreatingWorker] = useState(false);
   const [creatingWorkerData, setCreatingWorkerData] = useState({});
@@ -366,7 +368,7 @@ export default function AdminDashboard() {
         t={t}
       />
 
-       
+     
         <TipsHistoryModal
           isOpen={showTipsHistory} // Replace with actual state to control modal visibility
           onClose={() => {
