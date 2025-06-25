@@ -733,3 +733,88 @@ export const superAdminRestaurants = async (): Promise<ApiResponse<any>> => {
         throw error;
     }
 }
+
+
+
+export const superAdminGetQRCodes = async (restaurantId?:string): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/get-qr-codes/`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return { data, success: true };
+    } catch (error) {
+        console.error('Error fetching super admin QR codes:', error);
+        throw error;
+    }
+}
+
+export const superAdminEditQrCode = async (data: any): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/update-qr-code/${data.id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error editing super admin QR code:', error);
+        throw error;
+    }
+}
+
+
+export const superAdminCreateQrCode = async (data: any): Promise<ApiResponse<any>> => {
+    try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/super-admin/create-qr-code/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return { data: responseData, success: true };
+    } catch (error) {
+        console.error('Error creating super admin QR code:', error);
+        throw error;
+    }
+}

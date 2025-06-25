@@ -167,7 +167,7 @@ export function TipsHistoryModal({ isOpen, onClose, tips, workerName, workerPhot
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder={t("Search tips by net, percentage, or note...")}
+              placeholder={t("Search tips by net, percentage, or note")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -258,8 +258,8 @@ export function TipsHistoryModal({ isOpen, onClose, tips, workerName, workerPhot
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No tips found</h3>
               <p className="text-gray-600">
                 {searchTerm || filterBy !== 'all' 
-                  ? 'Try adjusting your search or filter criteria.' 
-                  : 'Tips will appear here as customers leave them.'}
+                  ? t('Try adjusting your search or filter criteria') 
+                  : t('Tips will appear here as customers leave them')}
               </p>
             </div>
           )}

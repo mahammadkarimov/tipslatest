@@ -282,7 +282,7 @@ export default function WorkerDashboard() {
                       <DollarSign className="w-8 h-8 text-gray-400" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">{t("No tips yet")}</h3>
-                    <p className="text-gray-600">{t("Tips will appear here as customers leave them.")}</p>
+                    <p className="text-gray-600">{t("Tips will appear here as customers leave them")}</p>
                   </div>
                 )}
               </CardContent>
@@ -300,9 +300,8 @@ export default function WorkerDashboard() {
                   <Eye className="w-4 h-4 mr-2" />
                   {t("View All Tips")}
                 </Button>
-               {/* <MyCards />
-               <WithdrawModal cards={cards} balance={waiterData?.balance || 0}/>*/}
-                
+               <MyCards t={t} />
+               <WithdrawModal cards={cards} balance={waiterData?.balance || 0} t={t}/>
               </CardContent>
             </Card>
 

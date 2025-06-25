@@ -13,7 +13,7 @@ import LanguageChanger from '@/components/LanguageChanger';
 export default function WorkerLogin() {
   const t = useTranslations('Worker');  
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [waiter_id, setwaiter_id] = useState('');
   const pathname = usePathname();
   const app = pathname.split('/')[2] || 'worker';
   const [password, setPassword] = useState('');
@@ -30,7 +30,7 @@ export default function WorkerLogin() {
 
     try {
       const success = await login({
-        email,
+        waiter_id,
         password,
       });
 
@@ -66,15 +66,15 @@ export default function WorkerLogin() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">{t("Email")}</label>
+              <label className="text-sm font-medium text-gray-700">{t("Waiter ID")}</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+               
                 <Input
-                  type="email"
-                  placeholder="sarah.j@goldenplate.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
+                  type="text"
+                  placeholder="123456"
+                  value={waiter_id}
+                  onChange={(e) => setwaiter_id(e.target.value)}
+
                   required
                 />
               </div>

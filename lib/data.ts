@@ -1,4 +1,4 @@
-import { Restaurant, Worker, Tip } from './types';
+import { Restaurant, Tip } from './types';
 
 export const mockRestaurants: Restaurant[] = [
   {
@@ -19,7 +19,7 @@ export const mockRestaurants: Restaurant[] = [
   }
 ];
 
-export const mockWorkers: Worker[] = [
+export const mockWorkers: any[] = [
   {
     id: 'worker1',
     name: 'Sarah Johnson',

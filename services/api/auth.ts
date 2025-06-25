@@ -1,7 +1,8 @@
 import { API_BASE_URL, API_ENDPOINTS, ApiResponse } from '../../lib/api-config';
 
 export type LoginCredentials = {
-  email: string;
+  waiter_id?: string;
+  email?: string;
   password: string;
 };
 

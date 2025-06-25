@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, CreditCard, MoreVertical, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { getBankCards , registerCard } from '@/services/api/user';
+import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 
 interface BankCard {
@@ -24,7 +25,7 @@ interface AddCardFormData {
   cvv: string;
 }
 
-export default function MyCards() {
+export default function MyCards({ t }:any) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAddCardOpen, setIsAddCardOpen] = useState(false);
   const [showCardNumbers, setShowCardNumbers] = useState(false);
@@ -184,14 +185,14 @@ useEffect(() => {
       <DialogTrigger asChild>
         <Button className="bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 shadow-sm flex items-center">
           <CreditCard className="w-5 h-5 mr-2" />
-          Manage Cards
+          {t("Manage Cards")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden bg-white dark:bg-gray-900">
         <DialogHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
-              My Payment Cards
+              {t("My Payment Cards")}
             </DialogTitle>
             <div className="flex items-center gap-2">
         
@@ -204,12 +205,12 @@ useEffect(() => {
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white">
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Card
+                    {t("Add Card")}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md">
                   <DialogHeader>
-                    <DialogTitle>Add New Card</DialogTitle>
+                    <DialogTitle>{t("Add New Card")}</DialogTitle>
                   </DialogHeader>
                   <iframe
                     src={iframeLink || ''}
@@ -227,8 +228,8 @@ useEffect(() => {
           {cards.length === 0 ? (
             <div className="text-center py-12">
               <CreditCard className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">No Cards Added</h3>
-              <p className="text-gray-500 mb-4">Add your first payment card to get started</p>
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">{t("No Cards Added")}</h3>
+              <p className="text-gray-500 mb-4">{t("Add your first payment card to get started")}</p>
               <Button onClick={() => {
                 setIsAddCardOpen(!isAddCardOpen);
                 if (!iframeLink) {
@@ -236,7 +237,7 @@ useEffect(() => {
                 }   
               }} className="bg-gradient-to-r from-blue-600 to-purple-600">
                 <Plus className="w-4 h-4 mr-2" />
-                Add Your First Card
+                {t("Add Your First Card")}
               </Button>
             </div>
           ) : (
@@ -267,7 +268,7 @@ useEffect(() => {
                               onClick={() => handleDeleteCard(card.id)}
                             >
                               <Trash2 className="w-4 h-4 mr-2" />
-                              Delete Card
+                              {t("Delete Card")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

@@ -5,13 +5,15 @@ import Image from 'next/image';
 import { mockRestaurants } from '@/lib/data';
 import { Navbar } from '@/components/Navbar';
 import { StatsCard } from '@/components/StatsCard';
-import { QRDisplay } from '@/components/QRDisplay';
+import { QRDisplay2 } from '@/components/QRDisplay';
 import { TipsHistoryModal } from '@/components/TipsHistoryAdmin';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { EditQrCode } from '@/components/EditQRCode';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { CreateWorkerModal } from '@/components/CreateWorkerModal';
+import { CreateQRCODE } from '@/components/CreateQRCide';
 import { useTranslations } from 'next-intl';
 import WorkerSearch from '@/components/WorkerSearch';
 import { 
@@ -27,24 +29,30 @@ import {
   Eye,
   Trash2
 } from 'lucide-react';
-import { superAdminGetTips , superAdminGetWaiters , superAdminEditWaiter, superAdminCreateWaiter , superAdminResetWaiterBalances,superAdminResetWaiterBalance, superAdminExportTips, superAdminExportWaiters , superAdminRestaurants
+import { superAdminGetTips , superAdminGetWaiters, superAdminGetQRCodes , superAdminEditWaiter, superAdminCreateWaiter , superAdminResetWaiterBalances,superAdminResetWaiterBalance, superAdminExportTips, superAdminExportWaiters , superAdminRestaurants
 
  } from '@/services/api/user';
 import toast from 'react-hot-toast';
 import { EditWorkerModal } from '@/components/EditWorkerModal';
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'restaurants' | 'workers' | 'qr-codes'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'restaurants' | 'workers' | 'qrcodes'>('overview');
   const [mockTips, setMockTips] = useState<any[]>([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [workers, setWorkers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingWorker, setEditingWorker] = useState<any | null>(null);
   const [isCreatingWorker, setIsCreatingWorker] = useState(false);
-  const [filteredTips, setFilteredTips] = useState<any[]>([]);
+  const [editingQrcode,setEditingQrcode] = useState<any | null>(null);
+  const [filteredTips, setFilteredTips] = useState<any[]>([]);  
+  const [showQrCodeModal, setShowQrCodeModal] = useState(false);
+  const [showCreateQrCodeModal, setShowCreateQrCodeModal] = useState(false);
   const [creatingWorkerData, setCreatingWorkerData] = useState({});
   const [showTipsHistory, setShowTipsHistory] = useState(false);
   const [filteredWorkers, setFilteredWorkers] = useState<any[]>([]);
   const [restaurantFilteredWorkers, setRestaurantFilteredWorkers] = useState<any[]>([]);
+  const [qrCodes, setQrCodes] = useState<any[]>([]);
+  const [filteredQrCodes, setFilteredQrCodes] = useState<any[]>([]);
+
   const [selectedRestaurant, setSelectedRestaurant] = useState<string>('all');
   const [restaurantList, setRestaurantList] = useState<any[]>([]);
   const [tipslastWeek, setTipsLastWeek] = useState<number>(0);
@@ -54,6 +62,24 @@ export default function AdminDashboard() {
     first_name: string;
     last_name: string;
   }
+
+
+  useEffect(() => {
+    const getQRcodes = async () => {
+        try {
+            const response = await superAdminGetQRCodes();
+            if (response.success && Array.isArray(response.data)) {
+            setQrCodes(response.data);
+            setFilteredQrCodes(response.data);
+            } else {
+            console.error('Invalid QR codes data format');
+            }
+        } catch (error) {
+            console.error('Error fetching QR codes:', error);
+        }
+        }
+    getQRcodes();
+    }, []);
   
   const [userData, setUserData] = useState<UserData | null>(null);
 
@@ -304,6 +330,7 @@ export default function AdminDashboard() {
           <TabButton tab="overview" label="Overview" icon={TrendingUp} />
   
           <TabButton tab="workers" label="Workers" icon={Users} />
+          <TabButton tab="qrcodes" label="QR Codes" icon={Users} />
        
         </div>
 
@@ -562,6 +589,85 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+          {activeTab === 'qrcodes' && (
+
+            
+            
+<div className="space-y-6">
+  <div className="mb-6">
+  <input
+type="text"
+placeholder={t("Search Workers")}
+className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+onChange={(e) => {
+const searchTerm = e.target.value.toLowerCase();
+const filtered = qrCodes.filter((qrcode) =>
+qrcode.qr_code_id.toLowerCase().includes(searchTerm)||
+qrcode.restaurant_name.toString().toLowerCase().includes(searchTerm) ||
+qrcode.waiter_name.toLowerCase().includes(searchTerm) 
+);
+setFilteredQrCodes(filtered);
+}}
+/>
+
+    
+       
+        
+  </div>
+  <div className="flex justify-between items-center">
+    <h2 className="text-2xl font-bold text-gray-900">{t("QR Codes")}</h2>
+    {
+      
+      <Button className="bg-gradient-to-r from-red-500 to-red-500 hover:from-red-600 hover:to-red-600" onClick={() => setShowCreateQrCodeModal(true)}>
+      <Plus className="w-4 h-4 mr-2" />
+      {t("Add A QR Code")}
+    </Button>
+    }
+  </div>
+ 
+  
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {filteredQrCodes.map((qrCode) => (
+      <Card key={qrCode.id} className="border-2 border-red-100">
+        <CardContent className="p-6">
+          <div className="text-center mb-4">
+            <div className="relative w-20 h-20 mx-auto mb-3">
+             
+            <QRDisplay2
+              title=""
+              subtitle=""
+              qrCode={'https://tips.byqr.az/tip/'+qrCode.qr_code_id}
+            />
+            </div>
+            <h3 className="font-bold text-gray-900">{qrCode.qr_code_id}</h3>
+            <Badge className="bg-red-100 text-red-700 hover:bg-red-200 mt-1">
+              {qrCode.waiter_name}
+            </Badge>
+          </div>
+          
+          <div className="space-y-2 text-sm text-gray-600 mb-4">
+            <p>{qrCode.restaurant_name}</p>
+          
+          </div>
+          
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => {
+                setShowQrCodeModal(true);
+                setEditingQrcode(qrCode);
+              
+            }}>
+              <Edit className="w-4 h-4 mr-1" />
+              Edit
+            </Button>
+          
+           
+          </div>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+</div>
+)}
 
 <EditWorkerModal
         isOpen={showEditModal}
@@ -600,7 +706,20 @@ export default function AdminDashboard() {
           t={t}
           
         />
+        <EditQrCode
+          isOpen={showQrCodeModal}
+            onClose={() => setShowQrCodeModal(false)}
+            qrCode={editingQrcode}
+            onSave={handleSaveWorker}
+            t={t}
+            />
+        <CreateQRCODE
+          isOpen={showCreateQrCodeModal}
+            onClose={() => setShowCreateQrCodeModal(false)}
+            t={t}
+            
 
+            />
        
     
       </div>

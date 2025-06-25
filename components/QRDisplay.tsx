@@ -34,3 +34,20 @@ export function QRDisplay({ title, subtitle, qrCode }: QRDisplayProps) {
     </Card>
   );
 }
+
+
+
+export function QRDisplay2({ title, subtitle, qrCode }: QRDisplayProps) {
+  return (
+   
+            <QRCodeSVG 
+              value={qrCode}
+              size={80}
+              bgColor="#ffffff"
+              fgColor="#000000"
+              level="H"
+            />
+            
+
+  );
+}

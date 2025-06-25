@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
 } as const;
 
 export type ApiResponse<T> = {
+  [x: string]: any;
  
   data?: T;
   error?: string;

@@ -20,9 +20,10 @@ interface BankCard {
 interface WithdrawModalProps {
   cards: BankCard[];
   balance: number;
+  t:any
 }
 
-const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
+const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance,t }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string>('');
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
@@ -152,14 +153,14 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
       <DialogTrigger asChild>
         <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
           <ArrowDownLeft className="w-5 h-5 mr-2" />
-          Withdraw Money
+          {t("Withdraw Money")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md bg-white dark:bg-gray-900">
         <DialogHeader className="border-b pb-4">
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center">
             <Wallet className="w-6 h-6 mr-2 text-emerald-600" />
-            Withdraw Money
+            {t("Withdraw Money")}
           </DialogTitle>
         </DialogHeader>
 
@@ -169,10 +170,10 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Withdrawal Successful!
+              {t("Withdrawal Successful")}!
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              ${parseFloat(withdrawAmount).toLocaleString()} has been withdrawn from your account
+              ${parseFloat(withdrawAmount).toLocaleString()} {t("has been withdrawn from your account")}
             </p>
           </div>
         ) : (
@@ -181,7 +182,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
             <div className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-gray-800 dark:to-blue-900 rounded-lg p-4 border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Available Balance</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t("Total Available Balance")}</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {balance} ₼
                   </p>
@@ -194,10 +195,10 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
 
             {/* Card Selection */}
             <div className="space-y-2">
-              <Label htmlFor="card-select">Select Card to Withdraw From</Label>
+              <Label htmlFor="card-select">{t("Select Card to Withdraw From")}</Label>
               <Select value={selectedCardId} onValueChange={setSelectedCardId}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose a card" />
+                  <SelectValue placeholder={t("Choose a card")} />
                 </SelectTrigger>
                 <SelectContent>
                   {cards.map((card) => (
@@ -206,8 +207,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
                         <div className="flex items-center space-x-3">
                       
                           <div>
-                            <p className="font-medium">{formatCardNumber(card.card_mask)}</p>
-                            <p className="text-sm text-gray-500">Balance: </p>
+                            <p className="font-medium">{card.card_mask}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{card.card_name}</p>
                           </div>
                         </div>
                       </div>
@@ -220,7 +221,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
             
             {/* Amount Input */}
             <div className="space-y-2">
-              <Label htmlFor="amount">Withdrawal Amount</Label>
+              <Label htmlFor="amount">{t("Withdrawal Amount")}</Label>
               <div className="relative">
                 <div className="absolute left-3 top-[15px] transform -translate-y-1/2 w-4 h-4 text-gray-400" >
                 ₼</div>
@@ -255,21 +256,21 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ cards , balance }) => {
               {isProcessing ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Processing...
+                  {t("Processing")}...
                 </div>
               ) : (
                 <>
                   <ArrowDownLeft className="w-4 h-4 mr-2" />
-                  Withdraw ${withdrawAmount || '0'}
+                  {t("Withdraw")} ₼{withdrawAmount || '0'}
                 </>
               )}
             </Button>
 
             {/* Transaction Limits Info */}
             <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-              <p>• Minimum withdrawal: $1</p>
-              <p>• Maximum withdrawal: $100 daily</p>
-              <p>• Processing time: 10-15 minutes maximum</p>
+              <p>• {t("Minimum withdrawal")}: ₼1</p>
+              <p>• {t("Maximum withdrawal")}: ₼100</p>
+              <p>• {t("Processing time")}: 10-15 {t("minutes maximum")}</p>
             </div>
           </div>
         )}
